@@ -9,6 +9,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.lxc.weatherscript.entity.WeatherEntity;
 import org.lxc.weatherscript.service.WeatherService;
+import org.lxc.weatherscript.util.WeatherIconUtil;
 import org.lxc.weatherscript.vo.WeatherReq;
 import org.lxc.weatherscript.vo.WeatherRsp;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,8 @@ public class WeatherServiceImpl implements WeatherService {
                     String string = EntityUtils.toString(entity);
                     weatherRsp = JSON.parseObject(string, WeatherRsp.class);
                     weather = weatherRsp.getLives()[0];
+                    // 添加天气图标
+                    weather.setWeatherIcon(WeatherIconUtil.getWeatherIcon(weather.getWeather()));
                     return weather;
                 }
             }
