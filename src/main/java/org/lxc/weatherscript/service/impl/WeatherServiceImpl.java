@@ -29,12 +29,13 @@ public class WeatherServiceImpl implements WeatherService {
                 System.out.println("Status Code: " + response.getStatusLine().getStatusCode());
 
                 HttpEntity entity = response.getEntity();
-                WeatherEntity weather;
-                WeatherRsp weatherRsp;
                 if (entity != null) {
                     String string = EntityUtils.toString(entity);
-                    weatherRsp = JSON.parseObject(string, WeatherRsp.class);
-                    weather = weatherRsp.getLives()[0];
+                    WeatherRsp weatherRsp = JSON.parseObject(string, WeatherRsp.class);
+                    if (weatherRsp == null || !"1".equals(weatherRsp.getStatus()) || weatherRsp.getLives() == null || weatherRsp.getLives().length == 0) {
+                        throw new RuntimeException("天气数据为空或API返回错误: " + (weatherRsp != null ? weatherRsp.getInfo() : "null"));
+                    }
+                    WeatherEntity weather = weatherRsp.getLives()[0];
                     // 添加天气图标
                     weather.setWeatherIcon(WeatherIconUtil.getWeatherIcon(weather.getWeather()));
                     return weather;
